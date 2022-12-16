@@ -1,0 +1,66 @@
+openapi: 3.0.0
+info:
+  # Title included in the Connexion-generate UI system
+  title: "Flask REST API"
+  description: "An API about people and notes"
+  # version value for the API
+  version: "1.0.0"
+
+servers:
+  # this define the root path of our API
+  - url: "/api"
+
+# building blocks in our OpenAPI specification that we can reference
+# from other parts of our specification
+components:
+  schemas:
+    Person:
+      # data type of the schemas
+      type: "object"
+      # we made lname the primary key so this must be present
+      required:
+        - lname
+      properties:
+        fname:
+          type: "string"
+        lname:
+          type: "string"
+
+paths:
+  # API endpoints
+  # relative URL of our API endpoint
+  /people:
+    # the HTTP method this URL endpoint will respond to
+    get:
+      # the python function that'll respond to the request
+      # search read_all() in people module of our project
+      operationId: "people.read_all"
+      # tag assigned to this endpoint, which allow us to group the
+      # operations in the UI
+      tags:
+        - "People"
+      # UI display text for this endpoint
+      summary: "Read the list of people"
+      # status codes the endpoint responds with
+      responses:
+        # define the configuration of the possible status codes
+        "200":
+          description: "Successfully read people list"
+    post:
+      operationId: "people.create"
+      tags:
+        - "People"
+      summary: "Create a person"
+      requestBody:
+        description: "Person to create"
+        required: True
+        content:
+          # data exchange format
+          application/json:
+            schema:
+              x-body-name: "person"
+              # referencing the component schema above
+              $ref: "#/components/schemas/Person"
+      responses:
+        "201":
+          description: "Successfully created person"
