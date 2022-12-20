@@ -35,6 +35,12 @@
   - we can then use this functionality to serialize and deserialize Python objects as they flow in and out of our REST API, which is based on JSON
   - Marshmallow converts Python class instances to objects that can be converted to JSON
 - `flask-marshmallow[sqlalchemy]` using the sqlalchemy option we can aslo install packages that helps our flask app leverage the powers of SQLAlchemy
+  - Because SQLAlchemy returns data as Python class instances, Connexion can't serialize these class instances to JSON-formatted data
+    - Here, serializing means converting python objects, which can contain other Python objects and complex data types, into simpler data structures that can be parsed into JSON data types
+    - our Person class contains a timestamp, which is a Python DateTime Class. There's no DateTime definition in JSON, so the timestamp has to be converted to a string in order to exist in JSON structure
+- Marshmallow helps us to create a PersonSchema class, which is like the SQLAlchemy Person class that we created.
+  - The PersonSchema class defines how the attributes of a class will be converted into JSON-friendly format
+  - Marshmallow also makes sure that all attributes are present and contain the expected data type
 
 ## Useful things
 
@@ -49,4 +55,3 @@
   - ```py
 
     ```
-
