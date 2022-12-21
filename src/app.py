@@ -1,19 +1,22 @@
 from flask import render_template
-import connexion
 
-app = connexion.App(__name__, specification_dir="./")
-# tell app instance to read the swagger.yaml file from the 
+
+import config
+from models import Person
+
+
+app = config.connex_app
+# tell app instance to read the swagger.yaml file from the
 # specification directory and configure the system to provide the
 # connexion functionality
-app.add_api("swagger.yaml")
-
-# app = Flask(__name__)
+app.add_api(config.basedir / "data/swagger.yaml")
 
 
 @app.route("/")
 def home():
+    people = Person.query.all()
     # templates are located in templates directory
-    return render_template("home.html")
+    return render_template("home.html", people=people)
 
 
 if __name__ == "__main__":

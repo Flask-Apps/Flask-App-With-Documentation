@@ -24,4 +24,5 @@ class PersonSchema(ma.SQLAlchemyAutoSchema):
 
 
 person_schema = PersonSchema()
+# expect an iterable to serialize
 people_schema = PersonSchema(many=True)
