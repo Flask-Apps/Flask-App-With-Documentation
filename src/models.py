@@ -1,5 +1,6 @@
 from datetime import datetime
 from config import db, ma
+from marshmallow_sqlalchemy import fields
 
 
 class Note(db.Model):
@@ -10,6 +11,16 @@ class Note(db.Model):
     timestamp = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )
+
+
+class NoteSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Note
+        load_instance = True
+        sqla_session = db.session
+        # to make Marshmallow recognize person_id during the
+        # serialization process
+        include_fk = True 
 
 
 class Person(db.Model):
@@ -33,7 +44,7 @@ class Person(db.Model):
         backref="person",
         # delete all the Note instances that are associated with this
         # person (associated one)
-        cascade="all, delete. delete-orphan",
+        cascade="all, delete, delete-orphan",
         # required if delete-orphan is part of cascade parameter
         # not allow an orphaned Note instance
         single_parent=True,
@@ -50,8 +61,14 @@ class PersonSchema(ma.SQLAlchemyAutoSchema):
         # instances from it
         load_instance = True
         sqla_session = db.session
+        # by default marshmallow schema doesn't raverse into related
+        # database objects
+        include_relationships = True
+
+    notes = fields.Nested(NoteSchema, many=True)
 
 
 person_schema = PersonSchema()
+note_schema = NoteSchema()
 # expect an iterable to serialize
 people_schema = PersonSchema(many=True)
